@@ -5,7 +5,14 @@ import { useEffect } from 'react';
 function App() {
 
   useEffect(() => {
-    fetch('/api/hello')
+    fetch('http://localhost:5000/api/hello')
+      .then(data => {
+        data.json()
+          .then(json => {
+            console.log(json);
+          })
+      })
+      .catch(err => console.error(err))
   }, [])
 
   return (
