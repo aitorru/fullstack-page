@@ -1,11 +1,13 @@
 import logo from './logo.svg';
 import './App.css';
 import { useEffect } from 'react';
+import { hostname, protol } from './utils/const';
 
 function App() {
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/hello')
+    console.log(window.location)
+    fetch(`${protol}//${hostname}:5000/api/hello`)
       .then(data => {
         data.json()
           .then(json => {
