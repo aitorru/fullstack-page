@@ -15,8 +15,6 @@ env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
-  IMAGE_NAME_FRONTEND: aitorru-frontEnd
-  IMAGE_NAME_BACKEND: aitorru-backEnd
 
 
 jobs:
@@ -34,7 +32,7 @@ jobs:
       - name: Build Image
         working-directory: ./frontend
         if: github.event_name != 'pull_request'
-        run: docker build --file Dockerfile --tag $IMAGE_NAME --label "${{IMAGE_NAME_FRONTEND}}=${GITHUB_RUN_ID}"
+        run: docker build --file Dockerfile --tag $IMAGE_NAME --label "aitorru-frontEnd=${GITHUB_RUN_ID}"
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
@@ -75,7 +73,7 @@ jobs:
       - name: Build Image
         working-directory: ./backend
         if: github.event_name != 'pull_request'
-        run: docker build --file Dockerfile --tag $IMAGE_NAME --label "${{IMAGE_NAME_FRONTEND}}=${GITHUB_RUN_ID}"
+        run: docker build --file Dockerfile --tag $IMAGE_NAME --label "aitorru-backEnd=${GITHUB_RUN_ID}"
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
