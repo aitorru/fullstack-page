@@ -32,7 +32,7 @@ jobs:
 
       - name: Build Image
         if: github.event_name != 'pull_request'
-        run: docker build --file Dockerfile --tag aitorru-frontend --label "aitorru-frontend=${GITHUB_RUN_ID}"
+        run: docker build . --file Dockerfile --tag aitorru-frontend --label "aitorru-frontend=${GITHUB_RUN_ID}"
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
