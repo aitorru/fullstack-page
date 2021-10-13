@@ -1,12 +1,12 @@
 version: "3"
 services:
   frontend:
-    build: frontend/
+    image: ghcr.io/aitorru/fullstack-page-aitorru-frontend:latest
     restart: always
     ports:
       - "80:80"
   backend:
-    build: backend/
+    image: ghcr.io/aitorru/fullstack-page-aitorru-backend:latest
     restart: always
     ports:
       - "5000:5000"
