@@ -9,7 +9,7 @@ const Login = React.lazy(() => import("../Pages/login"))
 export default function CustomRouter() {
     return (
         <Switch>
-            <Route path="/">
+            <Route exact path="/">
                 <Suspense fallback={<div>Loading...</div>}>
                     <App />
                 </Suspense>
