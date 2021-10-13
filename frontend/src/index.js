@@ -5,12 +5,18 @@ import {
   BrowserRouter as Router,
 } from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
-import CustomRouter from './Router/CustomRouter';
+import CustomRouter from './Router/Routes';
+import { SWRConfig } from 'swr';
 
 ReactDOM.render(
   <React.StrictMode>
     <Router>
-      <CustomRouter />
+      <SWRConfig value={{
+        refreshInterval: 3000,
+        fetcher: (resource, init) => fetch(resource, init).then(res => res.json())
+      }}>
+        <CustomRouter />
+      </SWRConfig>
     </Router>
 
   </React.StrictMode>,

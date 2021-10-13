@@ -8,7 +8,7 @@ CORS(app)
 
 @app.route("/api/hello")
 def hello_world():
-    return jsonify(payload="Hola mundo")
+    return jsonify(payload="Hola desde flask")
 
 
 if __name__ == "__main__":
