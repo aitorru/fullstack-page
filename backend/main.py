@@ -12,7 +12,14 @@ if len(sys.argv) > 1 and sys.argv[1] == "True":
     client = MongoClient("mongodb://root:example@db:27017/")
 else:
     # TODO: Get credentials from root file
+    # HowTo: docker run -d -e MONGO_INITDB_ROOT_USERNAME="root" -e MONGO_INITDB_ROOT_PASSWORD="example"  -p 27017:27017 --name MongoDataBase mongo:latest
     client = MongoClient("mongodb://root:example@localhost:27017")
+# Select the target db
+db = client.newspaper
+print(db.name)
+
+for items in db.newspaper.find():
+    print(items)
 
 
 @app.route("/api/hello")
