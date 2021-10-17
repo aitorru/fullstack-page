@@ -3,7 +3,8 @@ import {
 } from "react-router-dom";
 import { hostname, protol } from '../utils/const';
 import useSWR from 'swr'
-import Header from "../Components/Header";
+import Header from "../Components/header";
+import News from "../Components/news";
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
     return (
         <>
             <Header />
+            <News />
             <div className="container mx-auto">
                 <h1 className='flex-1 text-lg text-center'>Hola mundo</h1>
                 <ServerResponse />
