@@ -2,7 +2,7 @@ import MainButton from "../button";
 
 export default function Header() {
     return (
-        <div className='w-screen border-b-2 shadow-md'>
+        <div className='w-full border-b-2 shadow-md'>
             <div className='md:container md:mx-auto'>
                 <div className='flex align-middle items-center h-20'>
                     <div className='flex-grow-0'>

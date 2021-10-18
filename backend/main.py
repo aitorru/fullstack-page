@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from bson.json_util import dumps
 from flask_cors import CORS
 from pymongo import MongoClient
 import sys
@@ -18,13 +19,32 @@ else:
 db = client.newspaper
 print(db.name)
 
-for items in db.newspaper.find():
-    print(items)
+# Check if the database is empty ? Populate it : just pass
+print(db.news.count_documents({"maxTimeMS": 6000}))
+if db.news.count_documents({"maxTimeMS": 6000}) == 0:
+    db.news.insert_one(
+        {
+            "title": "Lorem ipsum",
+            "body": "1",
+        }
+    )
+else:
+    pass
+
+for items in db.news.find():
+    print("")
 
 
 @app.route("/api/hello")
 def hello_world():
     return jsonify(payload="Hola desde flask")
+
+
+@app.route("/api/news_list")
+def newsList():
+    cursor = db.news.find()
+    list_cur = list(cursor)
+    return dumps(list_cur)
 
 
 if __name__ == "__main__":

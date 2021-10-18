@@ -12,7 +12,7 @@ ReactDOM.render(
   <React.StrictMode>
     <Router>
       <SWRConfig value={{
-        refreshInterval: 3000,
+        refreshInterval: 60000,
         fetcher: (resource, init) => fetch(resource, init).then(res => res.json())
       }}>
         <CustomRouter />
