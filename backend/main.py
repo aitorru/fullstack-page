@@ -20,19 +20,36 @@ db = client.newspaper
 print(db.name)
 
 # Check if the database is empty ? Populate it : just pass
-print(db.news.count_documents({"maxTimeMS": 6000}))
-if db.news.count_documents({"maxTimeMS": 6000}) == 0:
+if db.news.count_documents({}) == 0:
     db.news.insert_one(
         {
             "title": "Lorem ipsum",
             "body": "1",
         }
     )
+    db.news.insert_one(
+        {
+            "title": "Lorem ipsum",
+            "body": "2",
+        }
+    )
+    db.news.insert_one(
+        {
+            "title": "Lorem ipsum",
+            "body": "3",
+        }
+    )
+    db.news.insert_one(
+        {
+            "title": "Lorem ipsum",
+            "body": "4",
+        }
+    )
 else:
-    pass
+    print("DB has documents")
 
 for items in db.news.find():
-    print("")
+    print(items)
 
 
 @app.route("/api/hello")
@@ -42,6 +59,7 @@ def hello_world():
 
 @app.route("/api/news_list")
 def newsList():
+    # TODO: Sort the response by the layout order.
     cursor = db.news.find()
     list_cur = list(cursor)
     return dumps(list_cur)
