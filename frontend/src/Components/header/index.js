@@ -1,3 +1,6 @@
+import {
+    Link
+} from "react-router-dom";
 import MainButton from "../button";
 
 export default function Header() {
@@ -10,7 +13,7 @@ export default function Header() {
                     </div>
                     <div className='flex-grow' />
                     <div className='flex-grow-0'>
-                        <MainButton text="Login" />
+                        <Link to="/login"><MainButton text="Login" /></Link>
                     </div>
                 </div>
             </div>
