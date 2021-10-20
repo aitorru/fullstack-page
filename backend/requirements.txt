@@ -3,4 +3,3 @@ flask-cors
 waitress
 pymongo
 asyncio
-bson

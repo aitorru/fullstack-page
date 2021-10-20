@@ -19,7 +19,7 @@ export default function NewsFirstRow() {
                             <LoadingGrid />
                         </>
                         :
-                        newsList.slice(1, 4).map((index) => {
+                        newsList.slice(1, 4)?.map((index) => {
                             return <Suspense fallback={LoadingGrid}><HeroGrid title={index['title']} /></Suspense>
                         })
                 }
