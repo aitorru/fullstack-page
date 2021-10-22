@@ -1,4 +1,7 @@
 import { useNewsList } from "../../Hooks/useNewsList"
+import {
+    Link
+} from "react-router-dom";
 
 export default function HeroBig() {
     const { newsList, isLoading } = useNewsList();
@@ -8,7 +11,7 @@ export default function HeroBig() {
                 {isLoading ?
                     <h1 className="text-4xl text-white font-bold">Loading...</h1>
                     :
-                    <h1 className="text-4xl text-white font-bold">{newsList[0]['title']}</h1>}
+                    <Link to={`/post/${newsList[0]['_id']['$oid']}`}><h1 className="text-4xl text-white font-bold">{newsList[0]['title']}</h1></Link>}
             </div>
         </div>
     )

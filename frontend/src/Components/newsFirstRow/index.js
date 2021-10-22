@@ -20,7 +20,7 @@ export default function NewsFirstRow() {
                         </>
                         :
                         newsList.slice(1, 4)?.map((index) => {
-                            return <Suspense key={index['_id']['$oid']} fallback={<LoadingGrid />}><HeroGrid key={index['_id']['$oid']} title={index['title']} /></Suspense>
+                            return <Suspense key={index['_id']['$oid']} fallback={<LoadingGrid />}><HeroGrid to={index['_id']['$oid']} key={index['_id']['$oid']} title={index['title']} /></Suspense>
                         })
                 }
 

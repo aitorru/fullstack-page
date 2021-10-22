@@ -19,7 +19,7 @@ export default function News() {
                         </>
                         :
                         newsList.slice(4)?.map((index) => {
-                            return <Suspense key={index['_id']['$oid']} fallback={<LoadingNextGrid />}><NextGrid key={index['_id']['$oid']} title={index['title']} /></Suspense>
+                            return <Suspense key={index['_id']['$oid']} fallback={<LoadingNextGrid />}><NextGrid to={index['_id']['$oid']} key={index['_id']['$oid']} title={index['title']} /></Suspense>
                         })
                 }
             </div>
