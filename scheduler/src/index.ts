@@ -38,7 +38,6 @@ server.get('/scheduler/', opts, async (_request, _reply) => {
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection('news');
-
     // Delete everithing from the database
     await collection.deleteMany({})
     // Download rss feed
@@ -55,7 +54,7 @@ server.get('/scheduler/', opts, async (_request, _reply) => {
 
 const start = async () => {
     try {
-        await server.listen(3000, "0.0.0.0")
+        await server.listen(5050, "0.0.0.0")
 
         const address = server.server.address()
         const port = typeof address === 'string' ? address : address?.port
