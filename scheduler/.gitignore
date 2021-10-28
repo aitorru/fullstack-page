@@ -1,0 +1,5 @@
+# node modules
+/node_modules
+
+# tsc output
+/dist

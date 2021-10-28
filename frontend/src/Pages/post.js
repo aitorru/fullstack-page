@@ -20,7 +20,7 @@ export default function Post() {
                             :
                             <>
                                 <h1 className="text-7xl text-center py-5 font-bold">{post['title']}</h1>
-                                <p style={{ whiteSpace: 'pre-line' }} className="text-justify py-3 px-10 text-xl">{post['body']}</p>
+                                <div className="text-justify py-3 px-10 text-xl" dangerouslySetInnerHTML={{ __html: post['body'] }} />
                             </>
                     }
                 </div>
