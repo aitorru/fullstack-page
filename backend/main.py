@@ -3,6 +3,7 @@ from bson.json_util import dumps
 from flask_cors import CORS
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+import urllib.request
 import sys
 
 app = Flask(__name__)
@@ -11,6 +12,7 @@ client = None
 if len(sys.argv) > 1 and sys.argv[1] == "True":
     # In "production" take the docker internal connection
     # TODO: Get credentials from root file
+    urllib.request.urlopen("http://scheduler/scheduler/")
     client = MongoClient("mongodb://root:example@db:27017/")
 else:
     # TODO: Get credentials from root file
@@ -18,16 +20,12 @@ else:
     client = MongoClient("mongodb://root:example@localhost:27017")
 # Select the target db
 db = client.newspaper
-print(db.name)
 
 # Check if the database is empty ? Populate it : just pass
 if db.news.count_documents({}) == 0:
     pass
 else:
-    print("DB has documents")
-
-for items in db.news.find():
-    print(items)
+    pass
 
 
 @app.route("/api/hello")
@@ -45,9 +43,7 @@ def newsList():
 
 @app.route("/api/post/<id>")
 def getPostByID(id):
-    print(id)
     cursor = db.news.find_one({"_id": ObjectId(id)})
-    print(cursor)
     return dumps(cursor)
 
 
@@ -58,4 +54,4 @@ if __name__ == "__main__":
         # This way we run the server in a production mode
         from waitress import serve
 
-        serve(app, host="0.0.0.0", port=5000)
+        serve(app, host="0.0.0.0", port=80)

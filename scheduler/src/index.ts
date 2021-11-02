@@ -54,7 +54,7 @@ server.get('/scheduler/', opts, async (_request, _reply) => {
 
 const start = async () => {
     try {
-        await server.listen(5050, "0.0.0.0")
+        env === 'development' ? await server.listen(5050, "0.0.0.0") : await server.listen(80, "0.0.0.0")
 
         const address = server.server.address()
         const port = typeof address === 'string' ? address : address?.port
