@@ -21,12 +21,6 @@ else:
 # Select the target db
 db = client.newspaper
 
-# Check if the database is empty ? Populate it : just pass
-if db.news.count_documents({}) == 0:
-    pass
-else:
-    pass
-
 
 @app.route("/api/hello")
 def hello_world():
