@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { useNewsList } from "../../Hooks/useNewsList";
 import HeroBig from "./heroBig";
+import Title from "./titleGrid";
 const HeroGrid = React.lazy(() => import("./heroGrid"))
 
 
@@ -9,7 +10,7 @@ export default function NewsFirstRow() {
     return (
         <>
             <HeroBig />
-            <div className="grid grid-rows-3 gap-4 md:col-span-2">
+            <div className="grid grid-rows-3 gap-4 md:col-span-4">
                 {
                     isLoading
                         ?
@@ -36,7 +37,7 @@ function LoadingGrid() {
     return (
         <div className="rounded-xl h-36 w-full bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
             <div className="flex w-full h-full align-bottom flex-col justify-end p-4">
-                <h1 className="text-4xl text-white font-bold">Loading...</h1>
+                <Title title={"Loading..."} />
             </div>
         </div>
     )

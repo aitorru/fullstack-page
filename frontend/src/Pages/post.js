@@ -18,7 +18,7 @@ export default function Post() {
                             <h1 className="text-3xl text-center py-5">Loading...</h1>
                             :
                             <>
-                                <h1 className="text-7xl text-center py-5 font-bold">{post['title']}</h1>
+                                <h1 className="text-4xl md:text-7xl text-center py-5 font-bold">{post['title']}</h1>
                                 <div className="flex flex-col text-justify py-3 px-3 md:px-0 text-xl dangerouslySetInnerHTML" dangerouslySetInnerHTML={{ __html: post['body'] }} />
                             </>
                     }
