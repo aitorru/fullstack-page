@@ -13,6 +13,6 @@ export default function HeroGrid({ title, to }) {
 
 
 function heroGridCustomTitle(title) {
-    return <h1 className="text-xl md:text-3xl text-white font-bold break-words">{title}</h1>;
+    return <h1 className="text-xl md:text-1xl lg:text-2xl xl:text-3xl text-white font-bold break-words">{title}</h1>;
 }
 

@@ -2,6 +2,10 @@ import Fastify, { FastifyInstance, RouteShorthandOptions } from 'fastify';
 import Parser from 'rss-parser';
 const parser = new Parser();
 import { MongoClient } from 'mongodb';
+const metascraper = require('metascraper')([
+    require('metascraper-image')(),
+])
+import got from 'got';
 
 // Check if production
 var env = process.env.NODE_ENV || 'development';
@@ -43,10 +47,14 @@ server.get('/scheduler/', opts, async (_request, _reply) => {
     // Download rss feed
     const feed = await parser.parseURL('https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada');
     // Go through all rss data
-    feed.items.forEach((item) => {
+    feed.items.forEach(async (item) => {
+        // Get meta tags from the link item
+        const { body: html, url } = await got(item.guid ? item.guid : "");
+        const metadata = await metascraper({ html, url })
         collection.insertOne({
             "title": item.title,
-            "body": item['content:encoded']
+            "body": item['content:encoded'],
+            "image": metadata.image
         });
     })
     return { status: 200 }
