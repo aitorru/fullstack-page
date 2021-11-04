@@ -19,6 +19,10 @@ export default function Post() {
                             :
                             <>
                                 <h1 className="text-4xl md:text-7xl text-center py-5 font-bold">{post['title']}</h1>
+                                <div className="flex w-full justify-center">
+                                    <img alt={post['title']} className="my-1 w-11/12 md:w-4/6 lg:w-1/2" src={post['image']} />
+
+                                </div>
                                 <div className="flex flex-col text-justify py-3 px-3 md:px-0 text-xl dangerouslySetInnerHTML" dangerouslySetInnerHTML={{ __html: post['body'] }} />
                             </>
                     }

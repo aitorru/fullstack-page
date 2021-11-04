@@ -9,11 +9,11 @@ export default function Header() {
             <div className='md:container md:mx-auto'>
                 <div className='flex align-middle items-center h-20 px-2 md:py-0'>
                     <div className='flex-grow-0'>
-                        <Link to="/"><h1 className='text-center text-5xl font-extrabold'>Midunews</h1></Link>
+                        <Link to="/"><h1 className='text-center text-4xl md:text-5xl lg:text-6xl font-extrabold'>Midunews</h1></Link>
                     </div>
                     <div className='flex-grow' />
                     <div className='flex-grow-0'>
-                        <Link to="/login"><MainButton text="Login" /></Link>
+                        <Link to="/login"><MainButton className="w-auto px-1 md:px-4 text-sm md:text-base lg:text-xl" text="Buscar mas noticias" /></Link>
                     </div>
                 </div>
             </div>

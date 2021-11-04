@@ -30,7 +30,7 @@ def hello_world():
 @app.route("/api/news_list")
 def newsList():
     # TODO: Sort the response by the layout order.
-    cursor = db.news.find()
+    cursor = db.news.find({}, limit=15)
     list_cur = list(cursor)
     return dumps(list_cur)
 

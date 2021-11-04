@@ -6,7 +6,9 @@ module.exports = {
   },
   variants: {
     extend: {
-      backgroundImage: ['hover', 'focus']
+      backgroundImage: ['hover', 'focus'],
+      blur: ['hover', 'focus'],
+      contrast: ['hover', 'focus'],
     },
   },
   plugins: [],
