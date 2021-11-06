@@ -1,7 +1,7 @@
 import Fastify, { FastifyInstance, RouteShorthandOptions } from 'fastify';
 import Parser from 'rss-parser';
 const parser = new Parser();
-import { MongoClient } from 'mongodb';
+import { InsertOneResult, MongoClient } from 'mongodb';
 const metascraper = require('metascraper')([
     require('metascraper-image')(),
 ])
@@ -43,21 +43,28 @@ server.get('/scheduler/', opts, async (_request, _reply) => {
     const db = client.db(dbName);
     const collection = db.collection('news');
     // Delete everithing from the database
+    // TODO: DO NOT THIS AND CHECK FOR DUPLICATES
     await collection.deleteMany({})
     // Download rss feed
     const feed = await parser.parseURL('https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada');
+    // Create a promise array to resolve all 
+    let mongoDBpromises: Promise<InsertOneResult<Document>>[] = [];
     // Go through all rss data
     feed.items.forEach(async (item) => {
         // Get meta tags from the link item
         const { body: html, url } = await got(item.guid ? item.guid : "");
         const metadata = await metascraper({ html, url })
-        collection.insertOne({
-            "title": item.title,
-            "body": item['content:encoded'],
-            "image": metadata.image
-        });
+        mongoDBpromises.push(
+            collection.insertOne({
+                "title": item.title,
+                "body": item['content:encoded'],
+                "image": metadata.image
+            })
+        );
     })
-    return { status: 200 }
+    // Wait for all inserts to be completed and then return.
+    return Promise.allSettled(mongoDBpromises)
+        .then(() => { return { status: 200 } })
 })
 
 const start = async () => {

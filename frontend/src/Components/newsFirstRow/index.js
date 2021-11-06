@@ -6,13 +6,13 @@ const HeroGrid = React.lazy(() => import("./heroGrid"))
 
 
 export default function NewsFirstRow() {
-    const { newsList, isLoading } = useNewsList();
+    const { newsList, isLoading, isError } = useNewsList();
     return (
         <>
             <HeroBig />
             <div className="grid grid-rows-3 gap-4 md:col-span-4">
                 {
-                    isLoading
+                    isLoading || isError
                         ?
                         <>
                             <LoadingGrid />

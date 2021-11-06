@@ -27,10 +27,18 @@ def hello_world():
     return jsonify(payload="Hola desde flask")
 
 
+@app.route("/api/news_list_limit_10")
+def newsListLimit():
+    # TODO: Sort the response by the layout order.
+    cursor = db.news.find({}, limit=15)
+    list_cur = list(cursor)
+    return dumps(list_cur)
+
+
 @app.route("/api/news_list")
 def newsList():
     # TODO: Sort the response by the layout order.
-    cursor = db.news.find({}, limit=15)
+    cursor = db.news.find({})
     list_cur = list(cursor)
     return dumps(list_cur)
 

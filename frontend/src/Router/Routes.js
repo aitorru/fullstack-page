@@ -4,7 +4,7 @@ import {
     Route
 } from "react-router-dom";
 const App = React.lazy(() => import("../Pages"))
-const Login = React.lazy(() => import("../Pages/login"))
+const MoreNews = React.lazy(() => import("../Pages/moreNews"))
 const Post = React.lazy(() => import("../Pages/post"))
 
 export default function CustomRouter() {
@@ -15,9 +15,9 @@ export default function CustomRouter() {
                     <App />
                 </Suspense>
             </Route>
-            <Route path="/login">
+            <Route path="/masNoticias">
                 <Suspense fallback={<div>Loading...</div>}>
-                    <Login />
+                    <MoreNews />
                 </Suspense>
             </Route>
             <Route path="/post/:id">

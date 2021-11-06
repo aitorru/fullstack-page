@@ -5,7 +5,7 @@ const NewsFirstRow = React.lazy(() => import("../newsFirstRow"))
 const NextGrid = React.lazy(() => import("../newsFirstRow/nextGrid"))
 
 export default function News() {
-    const { newsList, isLoading } = useNewsList();
+    const { newsList, isLoading, isError } = useNewsList();
 
     return (
         <div className="w-full md:container md:mx-auto py-2 px-2 md:px-0">
@@ -14,7 +14,7 @@ export default function News() {
                     <NewsFirstRow />
                 </Suspense>
                 {
-                    isLoading
+                    isLoading || isError
                         ?
                         <>
                         </>

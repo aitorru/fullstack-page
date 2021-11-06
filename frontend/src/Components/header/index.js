@@ -13,7 +13,7 @@ export default function Header() {
                     </div>
                     <div className='flex-grow' />
                     <div className='flex-grow-0'>
-                        <Link to="/login"><MainButton className="w-auto px-1 md:px-4 text-sm md:text-base lg:text-xl" text="Buscar mas noticias" /></Link>
+                        <Link to="/masNoticias"><MainButton className="w-auto px-1 md:px-4 text-sm md:text-base lg:text-xl" text="Buscar mas noticias" /></Link>
                     </div>
                 </div>
             </div>
