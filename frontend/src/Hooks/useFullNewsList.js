@@ -1,8 +1,8 @@
 import useSWR from "swr";
-import { hostname, protol } from '../utils/const';
 
-export function useFullNewsList() {
-    const { data, error } = useSWR(`${protol}//${hostname}:5000/api/news_list`)
+export function useFullNewsList(query) {
+    const fetchWithQuery = (url, query) => fetch(url, { headers: { query: query } }).then(r => r.json())
+    const { data, error } = useSWR([`/api/news_list`, query], fetchWithQuery)
 
     return {
         fullNewsList: data,

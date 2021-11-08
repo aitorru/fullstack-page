@@ -1,8 +1,7 @@
 import useSWR from "swr";
-import { hostname, protol } from '../utils/const';
 
 export function usePostByID(id) {
-    const { data, error } = useSWR(`${protol}//${hostname}:5000/api/post/${id}`)
+    const { data, error } = useSWR(`/api/post/${id}`)
 
     return {
         post: data,

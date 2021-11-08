@@ -4,7 +4,10 @@ from flask_cors import CORS
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import urllib.request
+from flask import request
 import sys
+
+import pymongo
 
 app = Flask(__name__)
 CORS(app)
@@ -30,17 +33,25 @@ def hello_world():
 @app.route("/api/news_list_limit_10")
 def newsListLimit():
     # TODO: Sort the response by the layout order.
-    cursor = db.news.find({}, limit=15)
+    cursor = db.news.find({}, limit=15).sort("_id", pymongo.DESCENDING)
     list_cur = list(cursor)
-    return dumps(list_cur)
+    # Inverse the array
+    return dumps(list_cur[::-1])
 
 
 @app.route("/api/news_list")
 def newsList():
     # TODO: Sort the response by the layout order.
-    cursor = db.news.find({})
-    list_cur = list(cursor)
-    return dumps(list_cur)
+    if request.headers.get("query", type=str) == "":
+        cursor = db.news.find({})
+        list_cur = list(cursor)
+        return dumps(list_cur)
+    else:
+        cursor = db.news.find(
+            {"$text": {"$search": request.headers.get("query", type=str)}}
+        )
+        list_cur = list(cursor)
+        return dumps(list_cur)
 
 
 @app.route("/api/post/<id>")
