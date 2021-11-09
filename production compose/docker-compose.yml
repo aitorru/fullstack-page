@@ -20,8 +20,6 @@ services:
       - "scheduler"
     ports:
       - "5000:80"
-    ports:
-      - "5000:5000"
   scheduler:
     image: ghcr.io/aitorru/fullstack-page-aitorru-scheduler:latest
     depends_on:
