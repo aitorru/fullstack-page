@@ -16,7 +16,8 @@ const client = new MongoClient(url);
 
 // Database Name
 const dbName = 'newspaper';
-const collectionName = 'news';
+const newsName = 'news';
+const categoryName = 'category';
 // Create db var
 const db = client.db(dbName);
 
@@ -31,7 +32,8 @@ const opts: RouteShorthandOptions = {
                 type: 'object',
                 properties: {
                     status: {
-                        type: 'number'
+                        type: 'number',
+                        data: 'text'
                     },
                 }
             }
@@ -40,39 +42,55 @@ const opts: RouteShorthandOptions = {
 }
 
 server.get('/scheduler/', opts, async (_request, _reply) => {
-    const collection = db.collection(collectionName);
+    const news = db.collection(newsName);
+    const categories = db.collection(categoryName);
     // Download rss feed
     const feed = await parser.parseURL('https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada');
     // Create a promise array to resolve all 
     let mongoDBpromises: Promise<InsertOneResult<Document>>[] = [];
     // Go through all rss data
     feed.items.forEach(async (item) => {
-        // Get meta tags from the link item
-        const { body: html, url } = await got(item.guid ? item.guid : "");
-        const metadata = await metascraper({ html, url });
-        // Get everything from the database
-        const newsData = collection.find({ guid: item.guid });
+        // Check if the category is present in the database. If not add it.
+        item.categories?.forEach(async (category) => {
+            const categoryData = categories.find({ category: category });
+            if (await categoryData.count() == 0) { // Means it does not exist.
+                mongoDBpromises.push(
+                    categories.insertOne({
+                        "category": category
+                    })
+                )
+            }
+        })
+        // Get the filtered data from the database. Check if the guid exists inside the db.
+        const newsData = news.find({ guid: item.guid });
         if (await newsData.count() == 0) {
+            // Get meta tags from the link item.
+            // Only do the request if it does not exist already.
+            const { body: html, url } = await got(item.guid ? item.guid : "");
+            const metadata = await metascraper({ html, url });
+            // Push into promise array
             mongoDBpromises.push(
-                collection.insertOne({
+                news.insertOne({
                     "title": item.title,
                     "guid": item.guid,
                     "body": item['content:encoded'],
-                    "image": metadata.image
+                    "image": metadata.image,
+                    "categories": item.categories
                 })
             );
         }
 
     })
     // Drop the index 
-    collection.dropIndexes()
+    news.dropIndexes()
         .then(() => {
             // Create an index to search 
-            collection.createIndex({ title: "text", body: "text" })
+            news.createIndex({ title: "text", body: "text" })
         })
     // Wait for all inserts to be completed and then return.
-    return Promise.allSettled(mongoDBpromises)
-        .then(() => { return { status: 200 } })
+    return await Promise.allSettled(mongoDBpromises)
+        // FIXME: The JSON.stringify does not return anything.
+        .then(async () => { return { status: 200, data: JSON.stringify(await news.find({}).toArray()) } })
 })
 
 const start = async () => {
@@ -82,7 +100,9 @@ const start = async () => {
         await client.db("admin").command({ ping: 1 });
         console.log("Connected successfully to mongo");
         try {
-            await db.createCollection(collectionName);
+            await db.createCollection(newsName);
+            await db.createCollection(categoryName);
+
         } catch (error) {
         }
         // Rise up the server after the creation of the collection
