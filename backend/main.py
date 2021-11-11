@@ -54,6 +54,13 @@ def newsList():
         return dumps(list_cur)
 
 
+@app.route("/api/get_categories")
+def categories():
+    cursor = db.category.find({})
+    list_cur = list(cursor)
+    return dumps(list_cur)
+
+
 @app.route("/api/post/<id>")
 def getPostByID(id):
     cursor = db.news.find_one({"_id": ObjectId(id)})

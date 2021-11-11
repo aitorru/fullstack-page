@@ -51,16 +51,20 @@ server.get('/scheduler/', opts, async (_request, _reply) => {
     // Go through all rss data
     feed.items.forEach(async (item) => {
         // Check if the category is present in the database. If not add it.
-        item.categories?.forEach(async (category) => {
-            const categoryData = categories.find({ category: category });
-            if (await categoryData.count() == 0) { // Means it does not exist.
-                mongoDBpromises.push(
-                    categories.insertOne({
-                        "category": category
-                    })
-                )
-            }
-        })
+        await (async function () { // Do this trick to handle await's inside a for
+            if (item.categories !== undefined)
+                for (let i = 0; i < item.categories.length; i++) {
+                    const category = item.categories[i];
+                    const categoryData = categories.find({ 'category': category });
+                    console.log(categoryData)
+                    if (await categoryData.count() == 0) { // Means it does not exist.
+                        await categories.insertOne({
+                            "category": category
+                        })
+                    }
+
+                }
+        })();
         // Get the filtered data from the database. Check if the guid exists inside the db.
         const newsData = news.find({ guid: item.guid });
         if (await newsData.count() == 0) {
