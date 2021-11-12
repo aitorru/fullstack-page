@@ -32,14 +32,31 @@ export default function FullNewsList() {
                         <h1>Loading...</h1>
                         :
                         fullNewsList.map((data) => {
-                            return (
-                                <div key={data['_id']['$oid']} className="rounded-xl h-auto md:h-full w-full transition-all bg-center bg-cover"
-                                    style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("${data['image']}")` }}>
-                                    <div className="flex w-full h-full align-bottom flex-col justify-end p-4">
-                                        <Link to={`/post/${data['_id']['$oid']}`}><Title title={data['title']} /></Link>
+                            if (categoriesSelected.length === 0
+                                ?
+                                true
+                                :
+                                data['categories'] === null
+                                    ?
+                                    false
+                                    :
+                                    data['categories'].some(r => {
+                                        return categoriesSelected.includes(r)
+                                    }
+                                    )) {
+                                return (
+                                    <div key={data['_id']['$oid']} className="rounded-xl h-auto md:h-full w-full transition-all bg-center bg-cover"
+                                        style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("${data['image']}")` }}>
+                                        <div className="flex w-full h-full align-bottom flex-col justify-end p-4">
+                                            <Link to={`/post/${data['_id']['$oid']}`}><Title title={data['title']} /></Link>
+                                        </div>
                                     </div>
-                                </div>
-                            )
+                                )
+                            }
+                            else {
+                                return <></>
+                            }
+
                         })
                 }
             </div>

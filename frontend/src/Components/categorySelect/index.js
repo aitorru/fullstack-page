@@ -5,7 +5,7 @@ export default function CategorySelect({ categoriesSelected, setSelectedCategori
     const { categories, isLoading, isError } = useCategories();
     return (
         <div className="md:container md:mx-auto w-full">
-            <div className="grid grid-flow-col gap-4 overflow-scroll items-center px-3 md:px-0">
+            <div className="grid grid-flow-col gap-4 overflow-x-scroll items-center px-3 md:px-0">
                 {
                     isLoading || isError
                         ?
