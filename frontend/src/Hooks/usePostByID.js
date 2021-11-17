@@ -1,7 +1,7 @@
 import useSWR from "swr";
 
 export function usePostByID(id) {
-    const { data, error } = useSWR(`/api/post/${id}`)
+    const { data, error } = useSWR(`http://localhost/api/post/${id}`)
 
     return {
         post: data,

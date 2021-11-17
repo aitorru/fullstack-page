@@ -1,7 +1,7 @@
 import useSWR from "swr";
 
 export function useCategories() {
-    const { data, error } = useSWR(`/api/get_categories`)
+    const { data, error } = useSWR(`http://localhost/api/get_categories`)
 
     return {
         categories: data,

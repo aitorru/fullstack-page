@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { useState } from "react"
+import React, { useState } from "react"
 import { useFullNewsList } from "../../Hooks/useFullNewsList"
 import Title from "../newsFirstRow/titleGrid";
-import CategorySelect from "../categorySelect";
+const CategorySelect = React.lazy(() => import("../categorySelect"))
+
 
 export default function FullNewsList() {
     const [inputValue, setInputValue] = useState("");
@@ -11,6 +12,32 @@ export default function FullNewsList() {
     }
     const { fullNewsList, isLoading, isError } = useFullNewsList(inputValue);
     const [categoriesSelected, setSelectedCategories] = useState([])
+
+    // Render conditional
+    const isValid = (selectedArray, toPrint) => {
+        if (selectedArray.length === 0) {
+            return true; // Means the user hasn't selected anything. So just render the news.
+        } else {
+            if (toPrint['categories'] === null) {
+                return false;
+            } else {
+                if (toPrint['categories'].some(r => { return selectedArrayIncludes(selectedArray, r) })) {
+                    return true
+                } else {
+                    return false
+                }
+            }
+        }
+    }
+    // Custom array.includes()
+    const selectedArrayIncludes = (selectedArray, r) => {
+        for (let i = 0; i < selectedArray.length; i++) {
+            if (selectedArray[i]['category'] === r) {
+                return true
+            }
+        }
+    }
+
     return (
         <div className="md:container md:mx-auto">
             <h1 className="text-4xl md:text-5xl lg:text-6xl w-full text-center p-4">Más noticias</h1>
@@ -32,18 +59,7 @@ export default function FullNewsList() {
                         <h1>Loading...</h1>
                         :
                         fullNewsList.map((data) => {
-                            if (categoriesSelected.length === 0
-                                ?
-                                true
-                                :
-                                data['categories'] === null
-                                    ?
-                                    false
-                                    :
-                                    data['categories'].some(r => {
-                                        return categoriesSelected.includes(r)
-                                    }
-                                    )) {
+                            if (isValid(categoriesSelected, data)) {
                                 return (
                                     <div key={data['_id']['$oid']} className="rounded-xl h-auto md:h-full w-full transition-all bg-center bg-cover"
                                         style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("${data['image']}")` }}>
