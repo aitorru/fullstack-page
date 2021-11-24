@@ -18,6 +18,7 @@ const client = new MongoClient(url);
 const dbName = 'newspaper';
 const newsName = 'news';
 const categoryName = 'category';
+const usersName = 'users';
 // Create db var
 const db = client.db(dbName);
 
@@ -100,6 +101,7 @@ const start = async () => {
         try {
             await db.createCollection(newsName);
             await db.createCollection(categoryName);
+            await db.createCollection(usersName);
 
         } catch (error) {
         }

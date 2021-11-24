@@ -6,11 +6,22 @@ from bson.objectid import ObjectId
 import urllib.request
 from flask import request
 import sys
-
+import bcrypt
 import pymongo
+from dotenv import load_dotenv
+import os
+
+# Load .env file
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
+app.config["BASE_URL"] = "http://127.0.0.1"  # Running on localhost
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET")  # Change this!
+app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
+app.config["JWT_COOKIE_CSRF_PROTECT"] = True
+app.config["JWT_CSRF_CHECK_FORM"] = True
+jwt = JWTManager(app)
 client = None
 if len(sys.argv) > 1 and sys.argv[1] == "True":
     # In "production" take the docker internal connection
@@ -23,6 +34,15 @@ else:
     client = MongoClient("mongodb://root:example@localhost:27017")
 # Select the target db
 db = client.newspaper
+
+# Assing tokens
+def assign_access_refresh_tokens(user_id, url):
+    access_token = create_access_token(identity=str(user_id))
+    refresh_token = create_refresh_token(identity=str(user_id))
+    resp = make_response(redirect(url, 302))
+    set_access_cookies(resp, access_token)
+    set_refresh_cookies(resp, refresh_token)
+    return resp
 
 
 @app.route("/api/hello")
@@ -65,6 +85,39 @@ def categories():
 def getPostByID(id):
     cursor = db.news.find_one({"_id": ObjectId(id)})
     return dumps(cursor)
+
+
+@app.route("/api/register", methods=["POST"])
+def register():
+    json = request.json
+    salt = bcrypt.gensalt()
+    db.users.insert_one(
+        {
+            "username": json["username"],
+            "password": bcrypt.hashpw(json["password"].encode(), salt).decode(),
+        }
+    )
+    return jsonify(status="200")
+
+
+@app.route("/api/login", methods=["POST"])
+def login():
+    json = request.json
+    cursor = db.users.find({"username": json["username"]})
+    count = db.users.count_documents({"username": json["username"]})
+    if count == 0:
+        return "Username not found", 400
+    else:
+        for doc in cursor:
+            passwordH = doc["password"]
+            if bcrypt.checkpw(json["password"].encode(), passwordH.encode()):
+                return jsonify(status="200")
+    return "pass"
+
+
+@app.route("/api/is_logged_in")
+def isLoggedIn():
+    return None
 
 
 if __name__ == "__main__":

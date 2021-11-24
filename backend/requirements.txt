@@ -2,4 +2,6 @@ flask
 flask-cors
 waitress
 pymongo
-asyncio
+bcrypt
+flask_jwt_extended
+python-dotenv
