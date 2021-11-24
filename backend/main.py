@@ -4,19 +4,32 @@ from flask_cors import CORS
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import urllib.request
-from flask import request
+from flask import request, Flask, redirect, make_response
 import sys
 import bcrypt
 import pymongo
 from dotenv import load_dotenv
 import os
+from flask_jwt_extended import (
+    JWTManager,
+    jwt_required,
+    create_access_token,
+    create_refresh_token,
+    set_access_cookies,
+    set_refresh_cookies,
+    unset_jwt_cookies,
+    unset_access_cookies,
+)
 
 # Load .env file
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
-app.config["BASE_URL"] = "http://127.0.0.1"  # Running on localhost
+# https://dev.to/totally_chase/python-using-jwt-in-cookies-with-a-flask-app-and-restful-api-2p75
+app.config[
+    "BASE_URL"
+] = "http://127.0.0.1:5000"  # Running on localhost TODO: Change in production
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET")  # Change this!
 app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
 app.config["JWT_COOKIE_CSRF_PROTECT"] = True
@@ -36,13 +49,42 @@ else:
 db = client.newspaper
 
 # Assing tokens
-def assign_access_refresh_tokens(user_id, url):
+def assign_access_refresh_tokens(user_id):
     access_token = create_access_token(identity=str(user_id))
     refresh_token = create_refresh_token(identity=str(user_id))
-    resp = make_response(redirect(url, 302))
+    resp = make_response("ok")
     set_access_cookies(resp, access_token)
     set_refresh_cookies(resp, refresh_token)
     return resp
+
+
+# Unset tokens
+def unset_jwt():
+    resp = make_response(redirect(app.config["BASE_URL"] + "/", 302))
+    unset_jwt_cookies(resp)
+    return resp
+
+
+@jwt.unauthorized_loader
+def unauthorized_callback():
+    # No auth header
+    return redirect("/login", 302)
+
+
+@jwt.invalid_token_loader
+def invalid_token_callback():
+    # Invalid Fresh/Non-Fresh Access token in auth header
+    resp = make_response(redirect("/login"))
+    unset_jwt_cookies(resp)
+    return resp, 302
+
+
+@jwt.expired_token_loader
+def expired_token_callback():
+    # Expired auth header
+    resp = make_response(redirect(app.config["BASE_URL"] + "/token/refresh"))
+    unset_access_cookies(resp)
+    return resp, 302
 
 
 @app.route("/api/hello")
@@ -97,7 +139,7 @@ def register():
             "password": bcrypt.hashpw(json["password"].encode(), salt).decode(),
         }
     )
-    return jsonify(status="200")
+    return assign_access_refresh_tokens(json["username"])
 
 
 @app.route("/api/login", methods=["POST"])
@@ -111,13 +153,14 @@ def login():
         for doc in cursor:
             passwordH = doc["password"]
             if bcrypt.checkpw(json["password"].encode(), passwordH.encode()):
-                return jsonify(status="200")
+                return assign_access_refresh_tokens(json["username"])
     return "pass"
 
 
 @app.route("/api/is_logged_in")
+@jwt_required()
 def isLoggedIn():
-    return None
+    return jsonify(loggedIn=True)
 
 
 if __name__ == "__main__":
