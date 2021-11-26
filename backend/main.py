@@ -25,11 +25,9 @@ from flask_jwt_extended import (
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 # https://dev.to/totally_chase/python-using-jwt-in-cookies-with-a-flask-app-and-restful-api-2p75
-app.config[
-    "BASE_URL"
-] = "http://127.0.0.1:5000"  # Running on localhost TODO: Change in production
+app.config["BASE_URL"] = ""  # Running on localhost TODO: Change in production
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET")  # Change this!
 app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
 app.config["JWT_COOKIE_CSRF_PROTECT"] = True
@@ -145,6 +143,7 @@ def register():
 @app.route("/api/login", methods=["POST"])
 def login():
     json = request.json
+    print(json)
     cursor = db.users.find({"username": json["username"]})
     count = db.users.count_documents({"username": json["username"]})
     if count == 0:

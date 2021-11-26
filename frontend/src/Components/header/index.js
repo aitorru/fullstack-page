@@ -12,7 +12,10 @@ export default function Header() {
                         <Link to="/"><h1 className='text-center text-4xl md:text-5xl lg:text-6xl font-extrabold'>Midunews</h1></Link>
                     </div>
                     <div className='flex-grow' />
-                    <div className='flex-grow-0'>
+                    <div className="flex-grow-0 w-auto pr-2">
+                        <Link to="/login"><MainButton className="w-auto px-1 md:px-4 text-sm md:text-base lg:text-xl" text="Login" /></Link>
+                    </div>
+                    <div className='flex-grow-0 w-auto'>
                         <Link to="/masNoticias"><MainButton className="w-auto px-1 md:px-4 text-sm md:text-base lg:text-xl" text="Buscar mas noticias" /></Link>
                     </div>
                 </div>
