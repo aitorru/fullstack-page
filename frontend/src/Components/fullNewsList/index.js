@@ -70,7 +70,7 @@ export default function FullNewsList() {
 								);
 							}
 							else {
-								return <></>;
+								return null;
 							}
 
 						})

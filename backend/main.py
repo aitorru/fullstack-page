@@ -59,7 +59,7 @@ def assign_access_refresh_tokens(user_id):
 
 # Unset tokens
 def unset_jwt():
-    resp = make_response(redirect(app.config["BASE_URL"] + "/", 302))
+    resp = make_response("ok")
     unset_jwt_cookies(resp)
     return resp
 
@@ -81,7 +81,7 @@ def invalid_token_callback():
 @jwt.expired_token_loader
 def expired_token_callback():
     # Expired auth header
-    resp = make_response(redirect(app.config["BASE_URL"] + "/token/refresh"))
+    resp = make_response(redirect("/token/refresh"))
     unset_access_cookies(resp)
     return resp, 302
 
@@ -127,6 +127,7 @@ def getPostByID(id):
     cursor = db.news.find_one({"_id": ObjectId(id)})
     return dumps(cursor)
 
+
 @app.route("/api/comments/<id>")
 def getCommentsByPostID(id):
     cursor = db.comments.find({"postId": id})
@@ -169,6 +170,12 @@ def isLoggedIn():
     if username == None:
         return jsonify(loggedIn=False)
     return jsonify(loggedIn=True, username=username)
+
+
+@app.route("/api/logout")
+@jwt_required(refresh=True)
+def logout():
+    return unset_jwt()
 
 
 if __name__ == "__main__":

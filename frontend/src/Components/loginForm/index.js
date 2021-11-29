@@ -1,9 +1,11 @@
 import {
 	Link
 } from 'react-router-dom';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import MainButton from '../button';
+import { mutate } from 'swr';
+import LoadingButton from '../loadingButton';
 
 export default function LoginForm() {
 	const history = useHistory();
@@ -11,7 +13,12 @@ export default function LoginForm() {
 	const usernameInput = useRef(null);
 	const passwordInput = useRef(null);
 
+	// Spinner behaviour
+	const [logginAction, setLogginAction] = useState(false);
+
 	const loginBehaviour = () => {
+		// Activate spinner
+		setLogginAction(true);
 		const payload = {
 			'username': usernameInput.current?.value,
 			'password': passwordInput.current?.value
@@ -26,6 +33,8 @@ export default function LoginForm() {
 
 		}).then((response) => {
 			if (response.status === 200) {
+				setLogginAction(false);
+				mutate('http://localhost/api/is_logged_in');
 				history.push('/');
 			}
 		});
@@ -44,7 +53,8 @@ export default function LoginForm() {
 				<input type="password"
 					ref={passwordInput}
 					className="placeholder-gray-500 placeholder-opacity-50 bg-gray-100 rounded-xl py-3 px-4 border border-gray-400 focus:border-gray-700" />
-				<MainButton text="Login" onClick={loginBehaviour} className="w-full" />
+				{logginAction ? <LoadingButton text="Login" className="w-full" /> : <MainButton text="Login" onClick={loginBehaviour} className="w-full" />}
+				
 				<h1>¿No tienes cuenta? <Link to="/register"><span className="text-indigo-500 hover:underline">Registrate</span></Link></h1>
 			</div>
 		</div>

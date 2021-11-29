@@ -1,6 +1,8 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { mutate } from 'swr';
 import MainButton from '../button';
+import LoadingButton from '../loadingButton';
 
 export default function RegisterForm() {
 	const history = useHistory();
@@ -8,7 +10,12 @@ export default function RegisterForm() {
 	const usernameInput = useRef(null);
 	const passwordInput = useRef(null);
 
+	// Spinner behaviour
+	const [logginAction, setLogginAction] = useState(false);
+
 	const loginBehaviour = () => {
+		// Activate spinner
+		setLogginAction(true);
 		const payload = {
 			'username': usernameInput.current?.value,
 			'password': passwordInput.current?.value
@@ -23,6 +30,8 @@ export default function RegisterForm() {
 
 		}).then((response) => {
 			if (response.status === 200) {
+				setLogginAction(false);
+				mutate('http://localhost/api/is_logged_in');
 				history.push('/');
 			}
 		});
@@ -41,7 +50,7 @@ export default function RegisterForm() {
 				<input type="password"
 					ref={passwordInput}
 					className="placeholder-gray-500 placeholder-opacity-50 bg-gray-100 rounded-xl py-3 px-4 border border-gray-400 focus:border-gray-700" />
-				<MainButton text="Register" onClick={loginBehaviour} className="w-full" />
+				{logginAction ? <LoadingButton text="Login" className="w-full" /> : <MainButton text="Login" onClick={loginBehaviour} className="w-full" />}
 			</div>
 		</div>
 	);

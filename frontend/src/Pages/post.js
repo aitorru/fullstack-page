@@ -1,8 +1,9 @@
 /* eslint-disable react/react-in-jsx-scope */
+import React from 'react';
 import {
 	useParams
 } from 'react-router-dom';
-import Comments from '../Components/comments';
+const Comments = React.lazy(() => import('../Components/comments'));
 import Header from '../Components/header';
 import { usePostByID } from '../Hooks/usePostByID';
 
