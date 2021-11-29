@@ -19,7 +19,7 @@ export default function LoginForm() {
 	const loginBehaviour = () => {
 		// Activate spinner
 		setLogginAction(true);
-		const payload = {
+		const body = {
 			'username': usernameInput.current?.value,
 			'password': passwordInput.current?.value
 		};
@@ -28,7 +28,7 @@ export default function LoginForm() {
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify(payload),
+			body: JSON.stringify(body),
 			credentials: 'include'
 
 		}).then((response) => {

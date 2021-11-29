@@ -9,7 +9,7 @@ export default function CategorySelect({ categoriesSelected, setSelectedCategori
 				{
 					isLoading || isError
 						?
-						<></>
+						null
 						:
 						categories.map(
 							category => {

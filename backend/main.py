@@ -134,6 +134,20 @@ def getCommentsByPostID(id):
     return dumps(cursor)
 
 
+@app.route("/api/comment", methods=["POST"])
+@jwt_required()
+def postComment():
+    json = request.json
+    db.comments.insert_one(
+        {
+            "username": get_jwt_identity(),
+            "postId": json["postId"],
+            "comment": json["comment"],
+        }
+    )
+    return jsonify(payload="Done")
+
+
 @app.route("/api/register", methods=["POST"])
 def register():
     json = request.json
