@@ -41,7 +41,6 @@
   },
   "devDependencies": {
     "autoprefixer": "9",
-    "eslint": "^8.3.0",
     "eslint-plugin-react": "^7.27.1",
     "postcss": "7",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat"
