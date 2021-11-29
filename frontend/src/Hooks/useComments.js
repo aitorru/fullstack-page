@@ -1,10 +1,10 @@
 import useSWR from 'swr';
 
-export function usePostByID(id) {
+export function useComments(id) {
 	const { data, error } = useSWR(`http://localhost/api/post/${id}`);
 
 	return {
-		post: data,
+		comments: data,
 		isLoading: !error && !data,
 		isError: error
 	};

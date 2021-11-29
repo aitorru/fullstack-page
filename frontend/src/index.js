@@ -2,25 +2,25 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import {
-  BrowserRouter as Router,
-} from "react-router-dom";
+	BrowserRouter as Router,
+} from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import CustomRouter from './Router/Routes';
 import { SWRConfig } from 'swr';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Router>
-      <SWRConfig value={{
-        refreshInterval: 10000,
-        fetcher: (resource, init) => fetch(resource, init).then(res => res.json())
-      }}>
-        <CustomRouter />
-      </SWRConfig>
-    </Router>
+	<React.StrictMode>
+		<Router>
+			<SWRConfig value={{
+				refreshInterval: 10000,
+				fetcher: (resource, init) => fetch(resource, init).then(res => res.json())
+			}}>
+				<CustomRouter />
+			</SWRConfig>
+		</Router>
 
-  </React.StrictMode>,
-  document.getElementById('root')
+	</React.StrictMode>,
+	document.getElementById('root')
 );
 
 // If you want to start measuring performance in your app, pass a function

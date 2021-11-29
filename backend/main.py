@@ -19,13 +19,14 @@ from flask_jwt_extended import (
     set_refresh_cookies,
     unset_jwt_cookies,
     unset_access_cookies,
+    get_jwt_identity,
 )
 
 # Load .env file
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 # https://dev.to/totally_chase/python-using-jwt-in-cookies-with-a-flask-app-and-restful-api-2p75
 app.config["BASE_URL"] = ""  # Running on localhost TODO: Change in production
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET")  # Change this!
@@ -126,6 +127,11 @@ def getPostByID(id):
     cursor = db.news.find_one({"_id": ObjectId(id)})
     return dumps(cursor)
 
+@app.route("/api/comments/<id>")
+def getCommentsByPostID(id):
+    cursor = db.comments.find({"postId": id})
+    return dumps(cursor)
+
 
 @app.route("/api/register", methods=["POST"])
 def register():
@@ -157,16 +163,19 @@ def login():
 
 
 @app.route("/api/is_logged_in")
-@jwt_required()
+@jwt_required(optional=True, refresh=True)
 def isLoggedIn():
-    return jsonify(loggedIn=True)
+    username = get_jwt_identity()
+    if username == None:
+        return jsonify(loggedIn=False)
+    return jsonify(loggedIn=True, username=username)
 
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
-        app.run("0.0.0.0", 5000, debug=True)
+        app.run("0.0.0.0", 5000, debug=True, threaded=True)
     elif len(sys.argv) > 1 and sys.argv[1] == "True":
         # This way we run the server in a production mode
         from waitress import serve
 
-        serve(app, host="0.0.0.0", port=80)
+        serve(app, host="0.0.0.0", port=80, threads=8)

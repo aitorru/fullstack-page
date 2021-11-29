@@ -1,14 +1,14 @@
-import Header from "../Components/header";
-import News from "../Components/news";
+import Header from '../Components/header';
+import News from '../Components/news';
 
 
 function App() {
-    return (
-        <>
-            <Header />
-            <News />
-        </>
-    );
+	return (
+		<>
+			<Header />
+			<News />
+		</>
+	);
 }
 
 export default App;

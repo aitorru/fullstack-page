@@ -1,11 +1,8 @@
-import {
-	Link
-} from 'react-router-dom';
 import { useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import MainButton from '../button';
 
-export default function LoginForm() {
+export default function RegisterForm() {
 	const history = useHistory();
 
 	const usernameInput = useRef(null);
@@ -16,7 +13,7 @@ export default function LoginForm() {
 			'username': usernameInput.current?.value,
 			'password': passwordInput.current?.value
 		};
-		fetch('http://localhost/api/login', {
+		fetch('http://localhost/api/register', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -35,7 +32,7 @@ export default function LoginForm() {
 		<div className="min-h-full flex flex-auto align-middle justify-items-center items-center justify-center">
 			<div
 				className="grid grid-flow-row gap-2 md:p-11 md:shadow-lg md:bg-gray-50 md:rounded-xl align-middle justify-items-center items-center justify-center">
-				<h1 className="text-4xl">Login form</h1>
+				<h1 className="text-4xl">Registro</h1>
 				<h1 className="text-2xl">Username</h1>
 				<input type="text"
 					ref={usernameInput}
@@ -44,8 +41,7 @@ export default function LoginForm() {
 				<input type="password"
 					ref={passwordInput}
 					className="placeholder-gray-500 placeholder-opacity-50 bg-gray-100 rounded-xl py-3 px-4 border border-gray-400 focus:border-gray-700" />
-				<MainButton text="Login" onClick={loginBehaviour} className="w-full" />
-				<h1>¿No tienes cuenta? <Link to="/register"><span className="text-indigo-500 hover:underline">Registrate</span></Link></h1>
+				<MainButton text="Register" onClick={loginBehaviour} className="w-full" />
 			</div>
 		</div>
 	);
