@@ -10,6 +10,7 @@ import bcrypt
 import pymongo
 from dotenv import load_dotenv
 import os
+from datetime import timedelta
 from flask_jwt_extended import (
     JWTManager,
     jwt_required,
@@ -23,6 +24,7 @@ from flask_jwt_extended import (
 )
 
 # Load .env file
+# TODO: Read from envs that gets passed from docker
 load_dotenv()
 
 app = Flask(__name__)
@@ -33,6 +35,8 @@ app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET")  # Change this!
 app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
 app.config["JWT_COOKIE_CSRF_PROTECT"] = True
 app.config["JWT_CSRF_CHECK_FORM"] = True
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 jwt = JWTManager(app)
 client = None
 if len(sys.argv) > 1 and sys.argv[1] == "True":
@@ -51,7 +55,7 @@ db = client.newspaper
 def assign_access_refresh_tokens(user_id):
     access_token = create_access_token(identity=str(user_id))
     refresh_token = create_refresh_token(identity=str(user_id))
-    resp = make_response("ok")
+    resp = make_response(jsonify(payload="ok"))
     set_access_cookies(resp, access_token)
     set_refresh_cookies(resp, refresh_token)
     return resp
@@ -59,7 +63,7 @@ def assign_access_refresh_tokens(user_id):
 
 # Unset tokens
 def unset_jwt():
-    resp = make_response("ok")
+    resp = make_response(jsonify(payload="ok"))
     unset_jwt_cookies(resp)
     return resp
 
@@ -81,7 +85,7 @@ def invalid_token_callback():
 @jwt.expired_token_loader
 def expired_token_callback():
     # Expired auth header
-    resp = make_response(redirect("/token/refresh"))
+    resp = make_response(redirect("/login"))
     unset_access_cookies(resp)
     return resp, 302
 

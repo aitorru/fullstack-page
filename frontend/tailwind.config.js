@@ -9,6 +9,8 @@ module.exports = {
 			backgroundImage: ['hover', 'focus'],
 			blur: ['hover', 'focus'],
 			contrast: ['hover', 'focus'],
+			padding: ['hover'],
+			margin: ['hover']
 		},
 	},
 	plugins: [],

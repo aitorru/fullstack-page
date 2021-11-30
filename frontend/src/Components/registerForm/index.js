@@ -20,7 +20,7 @@ export default function RegisterForm() {
 			'username': usernameInput.current?.value,
 			'password': passwordInput.current?.value
 		};
-		fetch('http://localhost/api/register', {
+		fetch('/api/register', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -31,7 +31,7 @@ export default function RegisterForm() {
 		}).then((response) => {
 			if (response.status === 200) {
 				setLogginAction(false);
-				mutate('http://localhost/api/is_logged_in');
+				mutate('/api/is_logged_in');
 				history.push('/');
 			}
 		});
