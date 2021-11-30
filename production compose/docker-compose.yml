@@ -7,8 +7,6 @@ services:
       - "80:80"
     links:
       - "backend"
-    ports:
-      - "80:80"
   backend:
     image: ghcr.io/aitorru/fullstack-page-aitorru-backend:latest
     restart: always
