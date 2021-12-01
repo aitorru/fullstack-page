@@ -10,7 +10,8 @@
     "watch-ts": "tsc -w",
     "watch-js": "nodemon dist/index.js",
     "start": "node dist/index.js",
-    "start:prod": "NODE_ENV=production node dist/index.js"
+    "start:prod": "NODE_ENV=production node dist/index.js",
+    "lint": "eslint . --ext .ts --fix"
   },
   "keywords": [],
   "author": "",
@@ -25,7 +26,10 @@
   },
   "devDependencies": {
     "@types/node": "^16.11.6",
+    "@typescript-eslint/eslint-plugin": "^5.5.0",
+    "@typescript-eslint/parser": "^5.5.0",
     "concurrently": "^6.3.0",
+    "eslint": "^8.3.0",
     "nodemon": "^2.0.14"
   }
 }

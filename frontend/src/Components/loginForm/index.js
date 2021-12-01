@@ -36,6 +36,9 @@ export default function LoginForm() {
 				setLogginAction(false);
 				mutate('/api/is_logged_in');
 				history.push('/');
+			} else {
+				setLogginAction(false);
+				alert('Usuario no encontrado');
 			}
 		});
 	};
