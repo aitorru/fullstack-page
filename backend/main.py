@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, Blueprint
 from bson.json_util import dumps
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -11,6 +11,7 @@ import pymongo
 from dotenv import load_dotenv
 import os
 from datetime import timedelta
+from flask_restx import Resource, Api
 from flask_jwt_extended import (
     JWTManager,
     jwt_required,
@@ -28,6 +29,9 @@ from flask_jwt_extended import (
 load_dotenv()
 
 app = Flask(__name__)
+blueprint = Blueprint("api", __name__, url_prefix="/api")
+api = Api(blueprint, doc="/doc/")
+app.register_blueprint(blueprint)
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 # https://dev.to/totally_chase/python-using-jwt-in-cookies-with-a-flask-app-and-restful-api-2p75
 app.config["BASE_URL"] = ""  # Running on localhost TODO: Change in production
@@ -90,33 +94,46 @@ def expired_token_callback():
     return resp, 302
 
 
-@app.route("/api/hello")
-def hello_world():
-    return jsonify(payload="Hola desde flask")
+@api.route("/my-resource/<id>", endpoint="my-resource")
+@api.doc(params={"id": "An ID"})
+class MyResource(Resource):
+    def get(self, id):
+        return {}
+
+    @api.doc(responses={403: "Not Authorized"})
+    def post(self, id):
+        api.abort(403)
 
 
-@app.route("/api/news_list_limit_10")
-def newsListLimit():
-    # TODO: Sort the response by the layout order.
-    cursor = db.news.find({}, limit=15).sort("_id", pymongo.DESCENDING)
-    list_cur = list(cursor)
-    # Inverse the array
-    return dumps(list_cur[::-1])
-
-
-@app.route("/api/news_list")
-def newsList():
-    # TODO: Sort the response by the layout order.
-    if request.headers.get("query", type=str) == "":
-        cursor = db.news.find({})
+@api.route("/news_list_limit_10")
+class NewsListLimit(Resource):
+    @api.doc(responses={200: "An array of news"})
+    def get(self):
+        cursor = db.news.find({}, limit=15).sort("_id", pymongo.DESCENDING)
         list_cur = list(cursor)
-        return dumps(list_cur)
-    else:
-        cursor = db.news.find(
-            {"$text": {"$search": request.headers.get("query", type=str)}}
-        )
-        list_cur = list(cursor)
-        return dumps(list_cur)
+        # Inverse the array
+        return dumps(list_cur[::-1])
+
+    @api.doc(responses={403: "Not Authorized"})
+    def post(self):
+        api.abort(403)
+
+
+@api.route("/api/news_list")
+class NewsList(Resource):
+    @api.doc(responses={200, "Full array of news"})
+    def get(self):
+        # TODO: Sort the response by the layout order.
+        if request.headers.get("query", type=str) == "":
+            cursor = db.news.find({})
+            list_cur = list(cursor)
+            return dumps(list_cur)
+        else:
+            cursor = db.news.find(
+                {"$text": {"$search": request.headers.get("query", type=str)}}
+            )
+            list_cur = list(cursor)
+            return dumps(list_cur)
 
 
 @app.route("/api/get_categories")
@@ -127,6 +144,7 @@ def categories():
 
 
 @app.route("/api/post/<id>")
+@api.doc(params={"id": "The ID off the news you want to access."})
 def getPostByID(id):
     cursor = db.news.find_one({"_id": ObjectId(id)})
     return dumps(cursor)
@@ -181,7 +199,7 @@ def login():
     return "pass"
 
 
-@app.route("/api/is_logged_in")
+@app.route("/api/user")
 @jwt_required(optional=True, refresh=True)
 def isLoggedIn():
     username = get_jwt_identity()
