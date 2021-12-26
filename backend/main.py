@@ -94,37 +94,34 @@ def expired_token_callback():
     return resp, 302
 
 
-@api.route("/my-resource/<id>", endpoint="my-resource")
-@api.doc(params={"id": "An ID"})
-class MyResource(Resource):
-    def get(self, id):
-        return {}
-
-    @api.doc(responses={403: "Not Authorized"})
-    def post(self, id):
-        api.abort(403)
-
-
 @api.route("/news_list_limit_10")
 class NewsListLimit(Resource):
-    @api.doc(responses={200: "An array of news"})
+    @api.doc(responses={200: "15 top news"})
     def get(self):
         cursor = db.news.find({}, limit=15).sort("_id", pymongo.DESCENDING)
         list_cur = list(cursor)
         # Inverse the array
         return dumps(list_cur[::-1])
 
-    @api.doc(responses={403: "Not Authorized"})
-    def post(self):
-        api.abort(403)
+
+parser = api.parser()
+parser.add_argument("query", location="headers")
 
 
-@api.route("/api/news_list")
+@api.route("/news_list")
+@api.expect(parser)
 class NewsList(Resource):
-    @api.doc(responses={200, "Full array of news"})
+    @api.doc(
+        responses={
+            200: "If query header is not present or set to '' it send back all the news. Otherwise it looks up the query and returns matching text."
+        }
+    )
     def get(self):
         # TODO: Sort the response by the layout order.
-        if request.headers.get("query", type=str) == "":
+        if (
+            request.headers.get("query", type=str) == ""
+            or request.headers.get("query", type=str) == None
+        ):
             cursor = db.news.find({})
             list_cur = list(cursor)
             return dumps(list_cur)
@@ -136,11 +133,13 @@ class NewsList(Resource):
             return dumps(list_cur)
 
 
-@app.route("/api/get_categories")
-def categories():
-    cursor = db.category.find({})
-    list_cur = list(cursor)
-    return dumps(list_cur)
+@api.route("/get_categories")
+class Categories(Resource):
+    @api.doc(responses={200: "Get all categories"})
+    def get(self):
+        cursor = db.category.find({})
+        list_cur = list(cursor)
+        return dumps(list_cur)
 
 
 @app.route("/api/post/<id>")
