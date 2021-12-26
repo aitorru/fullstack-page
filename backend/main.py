@@ -23,6 +23,7 @@ from flask_jwt_extended import (
     unset_access_cookies,
     get_jwt_identity,
 )
+from werkzeug.wrappers import response
 
 # Load .env file
 # TODO: Read from envs that gets passed from docker
@@ -142,8 +143,15 @@ class Categories(Resource):
         return dumps(list_cur)
 
 
+@api.route("/post/<string:id>")
+class PostById(Resource):
+    @api.doc(responses={200: "Return the post with the id specified"})
+    def get(self, id):
+        cursor = db.news.find_one({"_id": ObjectId(id)})
+        return dumps(cursor)
+
+
 @app.route("/api/post/<id>")
-@api.doc(params={"id": "The ID off the news you want to access."})
 def getPostByID(id):
     cursor = db.news.find_one({"_id": ObjectId(id)})
     return dumps(cursor)
