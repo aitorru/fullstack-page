@@ -17,9 +17,6 @@ ReactDOM.render(
 				fetcher: (resource, init) => fetch(resource, init).then(res => res.json())
 			}}>
 				<CustomRouter />
-				<div className='mt-6 h-32 bg-blue-400 flex justify-center'>
-					<h1 className='text-white font-black text-3xl'>See the docs <a href='/api/doc/' className='underline'>here</a></h1>
-				</div>
 			</SWRConfig>
 		</Router>
 
@@ -36,3 +33,5 @@ serviceWorkerRegistration.register();
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals(console.log);
+
+

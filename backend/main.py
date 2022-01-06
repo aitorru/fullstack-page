@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, Blueprint
+import json
+from flask import Flask, jsonify, Blueprint, render_template
 from bson.json_util import dumps
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -11,7 +12,7 @@ import pymongo
 from dotenv import load_dotenv
 import os
 from datetime import timedelta
-from flask_restx import Resource, Api
+from flask_restx import Resource, Api, apidoc
 from flask_jwt_extended import (
     JWTManager,
     jwt_required,
@@ -31,7 +32,7 @@ load_dotenv()
 
 app = Flask(__name__)
 blueprint = Blueprint("api", __name__, url_prefix="/api")
-api = Api(blueprint, doc="/doc/")
+api = Api(blueprint, doc="/doc/", specs_url="/api", static_url_path="/api/swaggerui")
 app.register_blueprint(blueprint)
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 # https://dev.to/totally_chase/python-using-jwt-in-cookies-with-a-flask-app-and-restful-api-2p75
@@ -55,6 +56,21 @@ else:
     client = MongoClient("mongodb://root:example@localhost:27017")
 # Select the target db
 db = client.newspaper
+
+# only when running on aks
+@apidoc.apidoc.add_app_template_global
+def swagger_static(filename):
+    print(filename)
+    return "{0}/swaggerui/{1}".format("/api", filename)
+
+
+# only when running on aks
+@api.documentation
+def custom_ui():
+    return render_template(
+        "swagger-ui.html", title=api.title, specs_url="{}/swagger.json".format("/api")
+    )
+
 
 # Assing tokens
 def assign_access_refresh_tokens(user_id):
@@ -102,7 +118,7 @@ class NewsListLimit(Resource):
         cursor = db.news.find({}, limit=15).sort("_id", pymongo.DESCENDING)
         list_cur = list(cursor)
         # Inverse the array
-        return dumps(list_cur[::-1])
+        return json.loads(dumps(list_cur[::-1]))
 
 
 parser = api.parser()
@@ -125,13 +141,13 @@ class NewsList(Resource):
         ):
             cursor = db.news.find({})
             list_cur = list(cursor)
-            return dumps(list_cur)
+            return json.loads(dumps(list_cur))
         else:
             cursor = db.news.find(
                 {"$text": {"$search": request.headers.get("query", type=str)}}
             )
             list_cur = list(cursor)
-            return dumps(list_cur)
+            return json.loads(dumps(list_cur))
 
 
 @api.route("/get_categories")
@@ -140,7 +156,7 @@ class Categories(Resource):
     def get(self):
         cursor = db.category.find({})
         list_cur = list(cursor)
-        return dumps(list_cur)
+        return json.loads(dumps(list_cur))
 
 
 @api.route("/post/<string:id>")
@@ -148,7 +164,7 @@ class PostById(Resource):
     @api.doc(responses={200: "Return the post with the id specified"})
     def get(self, id):
         cursor = db.news.find_one({"_id": ObjectId(id)})
-        return dumps(cursor)
+        return json.loads(dumps(cursor))
 
 
 @app.route("/api/post/<id>")

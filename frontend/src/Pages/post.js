@@ -3,6 +3,7 @@ import React from 'react';
 import {
 	useParams
 } from 'react-router-dom';
+import Footer from '../Components/Footer';
 const Comments = React.lazy(() => import('../Components/comments'));
 import Header from '../Components/header';
 import { usePostByID } from '../Hooks/usePostByID';
@@ -33,6 +34,7 @@ export default function Post() {
 					}
 				</div>
 			</div>
+			<Footer />
 		</>
 
 	);

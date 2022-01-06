@@ -34,7 +34,7 @@ export default function LoginForm() {
 		}).then((response) => {
 			if (response.status === 200) {
 				setLogginAction(false);
-				mutate('/api/is_logged_in');
+				mutate('/api/user');
 				history.push('/');
 			} else {
 				setLogginAction(false);

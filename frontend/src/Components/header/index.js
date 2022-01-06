@@ -24,7 +24,7 @@ export default function Header() {
 		}).then(
 			response => {
 				if (response.status === 200) {
-					mutate('/api/is_logged_in');
+					mutate('/api/user');
 				}
 			}
 		);

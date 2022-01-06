@@ -63,7 +63,6 @@ server.get('/scheduler/', opts, async () => {
 							'category': category
 						});
 					}
-
 				}
 			// Get the filtered data from the database. Check if the guid exists inside the db.
 			const newsData = news.find({ guid: item.guid });
@@ -81,7 +80,6 @@ server.get('/scheduler/', opts, async () => {
 					'categories': item.categories
 				});
 			}
-
 		}
 		resolve('');
 	});
@@ -110,6 +108,9 @@ const start = async () => {
 		}
 		// Rise up the server after the creation of the collection
 		env === 'development' ? await server.listen(5050, '0.0.0.0') : await server.listen(80, '0.0.0.0');
+		setInterval(() => {
+			fetch('http://localhost/scheduler/')
+		}, 1800000) // Every 30 minutes
 		const address = server.server.address();
 		const port = typeof address === 'string' ? address : address?.port;
 

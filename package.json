@@ -1,8 +1,0 @@
-{
-  "turbo": {
-    "baseBranch": "origin/master"
-  },
-  "devDependencies": {
-    "turbo": "^1.0.12"
-  }
-}
