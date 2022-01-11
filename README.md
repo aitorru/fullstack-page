@@ -7,8 +7,13 @@
 
 ## Usage
 
+### Dev
 ```sh
 docker-compose up
+```
+### Production
+```sh
+cd "production compose" && docker-compose up
 ```
 
 ## Author
